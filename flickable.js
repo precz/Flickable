@@ -61,7 +61,7 @@ var Flickable = function(elementSelector, options) {
     if (settings.width === 'screen') {
         settings.widthScreen = true;
         settings.width = settings.widthCallback();
-        window.addEventListener(orientationEvent, function(e) {
+        window.addEventListener(orientationEvent, function() {
             clearTimeout(orientationTimeout);
             orientationTimeout = setTimeout(function() {
                 settings.width = settings.widthCallback();
@@ -321,7 +321,7 @@ var Flickable = function(elementSelector, options) {
                     reposition(evt);
                 };
 
-                var endEvent = function(evt) {
+                var endEvent = function() {
                     var diff = current[0] - origin[0] + ((speed / settings.width) * 12000);
 
                     // Snap to closest panel
