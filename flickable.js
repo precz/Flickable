@@ -121,267 +121,269 @@ var Flickable = function(elementSelector, options) {
         return slideshowNavigation;
     };
 
-    // Set up flickables for all matched elements
-    for (i = 0, j = elements.length; i < j; i++) {
-        (function(i) {
+    var setUpFlickables = function (elements, settings, events, i) {
+        var element = elements[i],
+            item = element.children[0],
+            subItems = item.children,
+            subItemCount = subItems.length,
+            currentSlide = settings.offset,
+            previousSlide = currentSlide,
+            offset,
+            k,
+            indicator;
 
-            var element = elements[i],
-                item = element.children[0],
-                subItems = item.children,
-                subItemCount = subItems.length,
-                currentSlide = settings.offset,
-                previousSlide = currentSlide,
-                offset,
-                k;
+        if (settings.showIndicators) {
+            indicator = document.createElement('div');
 
-            if (settings.showIndicators) {
-                var indicator = document.createElement('div');
-
-                if (settings.showNumbers) {
-                    indicator.setAttribute('class', settings.numberIndicatorClass);
-                } else {
-                    indicator.setAttribute('class', settings.dotsIndicatorClass);
-                }
-
-                for (k = 0; k < subItemCount; k++) {
-                    indicator.appendChild(document.createElement('span'));
-                }
-
-                indicator.childNodes[currentSlide].setAttribute('class', settings.activeIndicatorClass);
-                element.parentNode.insertBefore(indicator, element.nextSibling);
+            if (settings.showNumbers) {
+                indicator.setAttribute('class', settings.numberIndicatorClass);
+            } else {
+                indicator.setAttribute('class', settings.dotsIndicatorClass);
             }
 
-            var updateIndicators = function() {
-                if (settings.showIndicators) {
-                    var indicators = indicator.childNodes, k;
-                    for (k = 0, l = indicators.length; k < l; k++) {
-                        if (k !== currentSlide) {
-                            indicators[k].removeAttribute('class');
-                            indicators[k].innerHTML = "";
-                        } else {
-                            indicators[k].setAttribute('class', settings.activeIndicatorClass);
-                            if (settings.showNumbers) {
-                                var k1 = k + 1;
-                                indicators[k].innerHTML = '<div class="caption">' + subItems[k].getAttribute('data-caption') + '</div><div class="number">' + ' ' + k1 + ' / ' + indicators.length + '</div>';
-                            }
-                        }
-                    }
-                }
-            };
+            for (k = 0; k < subItemCount; k++) {
+                indicator.appendChild(document.createElement('span'));
+            }
 
-            var callCallback = function() {
-                if (settings.callback) {
-                    setTimeout(function() {
-                        if (currentSlide !== previousSlide) {
-                            settings.callback(currentSlide);
-                            previousSlide = currentSlide;
-                        }
-                    }, 200);
-                }
-            };
+            indicator.childNodes[currentSlide].setAttribute('class', settings.activeIndicatorClass);
+            element.parentNode.insertBefore(indicator, element.nextSibling);
+        }
 
-            // Use touch events and transforms on fancy phones
-            if (events) {
-                var enableAnimation = function() {
-                    item.style.WebkitTransition = '-webkit-transform 0.4s ease';
-                    item.style.MozTransition = '-moz-transform 0.4s ease';
-                    item.style.OTransition = '-o-transform 0.4s ease';
-                    item.style.transition = 'transform 0.4s ease';
-                };
-
-                var disableAnimation = function() {
-                    item.style.WebkitTransition = '';
-                    item.style.MozTransition = '';
-                    item.style.OTransition = '';
-                    item.style.transition = '';
-                };
-
-                var snapToCurrentSlide = function(showAnimation) {
-                    if (showAnimation) {
-                        enableAnimation();
+        var updateIndicators = function() {
+            if (settings.showIndicators) {
+                var indicators = indicator.childNodes, k, l;
+                for (k = 0, l = indicators.length; k < l; k++) {
+                    if (k !== currentSlide) {
+                        indicators[k].removeAttribute('class');
+                        indicators[k].innerHTML = "";
                     } else {
-                        disableAnimation();
-                    }
-                    offset = -(currentSlide * settings.width);
-
-                    item.style.WebkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
-                    item.style.MozTransform = 'translateX(' + offset + 'px)';
-                    item.style.OTransform = 'translateX(' + offset + 'px)';
-                    item.style.transform = 'translate3d(' + offset + 'px, 0, 0)';
-                    callCallback();
-                    updateIndicators();
-                };
-
-                var resetWidths = function() {
-                    snapToCurrentSlide(false);
-                    item.style.width = (settings.width * subItemCount) + 'px';
-
-                    for (k = 0; k < subItemCount; k++) {
-                        subItems[k].style.width = settings.width + 'px';
-                    }
-                };
-
-                resetWidths();
-
-                window.addEventListener(orientationEvent, function() {
-                    setTimeout(function() {
-                        resetWidths();
-                    }, 400);
-                });
-
-                // Show buttons if wanted
-                if (settings.showButtons) {
-                    element.appendChild(createButtons(function() {
-                        currentSlide = currentSlide - 1;
-                        if (!subItems[currentSlide]) {
-                            currentSlide = subItemCount - 1;
+                        indicators[k].setAttribute('class', settings.activeIndicatorClass);
+                        if (settings.showNumbers) {
+                            var k1 = k + 1;
+                            indicators[k].innerHTML = '<div class="caption">' + subItems[k].getAttribute('data-caption') + '</div><div class="number">' + ' ' + k1 + ' / ' + indicators.length + '</div>';
                         }
-                        snapToCurrentSlide(true);
-                    }, function() {
-                        currentSlide = currentSlide + 1;
-                        if (!subItems[currentSlide]) {
-                            currentSlide = 0;
-                        }
-                        snapToCurrentSlide(true);
-                    }));
+                    }
                 }
+            }
+        };
 
-                // auto-rotation if wanted
-                if (options.timeInterval > 0)
-                {
-                    setInterval(function() {
-                            currentSlide = currentSlide + 1;
-                            if (!subItems[currentSlide]) {
-                                currentSlide = 0;
-                            }
-                            snapToCurrentSlide(true);
-                        }, options.timeInterval * 1000
-                    );
-                }
-
-                // Get X and Y value from a touch or mouse event
-                var getXY = function(evt) {
-                    if (evt.targetTouches && evt.targetTouches.length) {
-                        var i,
-                            j = evt.targetTouches.length,
-                            sumX = 0,
-                            sumY = 0;
-                        for (i = 0 ; i < j; i++) {
-                            sumX += evt.targetTouches[i].clientX;
-                            sumY += evt.targetTouches[i].clientY;
-                        }
-                        return [sumX / j, sumY / j];
+        var callCallback = function() {
+            if (settings.callback) {
+                setTimeout(function() {
+                    if (currentSlide !== previousSlide) {
+                        settings.callback(currentSlide);
+                        previousSlide = currentSlide;
                     }
-                    return [evt.clientX, evt.clientY];
-                };
+                }, 200);
+            }
+        };
 
-                // Set up touch listener
-                element.addEventListener(events.start, function(evt) {
+        // Use touch events and transforms on fancy phones
+        if (events) {
+            var enableAnimation = function() {
+                item.style.WebkitTransition = '-webkit-transform 0.4s ease';
+                item.style.MozTransition = '-moz-transform 0.4s ease';
+                item.style.OTransition = '-o-transform 0.4s ease';
+                item.style.transition = 'transform 0.4s ease';
+            };
 
-                    // Get origin position
-                    var origin = getXY(evt),
-                        current = origin,
-                        prevTime = (new Date()).getTime(),
-                        speed = 0;
+            var disableAnimation = function() {
+                item.style.WebkitTransition = '';
+                item.style.MozTransition = '';
+                item.style.OTransition = '';
+                item.style.transition = '';
+            };
 
+            var snapToCurrentSlide = function(showAnimation) {
+                if (showAnimation) {
+                    enableAnimation();
+                } else {
                     disableAnimation();
+                }
+                offset = -(currentSlide * settings.width);
 
-                    // Reposition gallery based on event
-                    var reposition = function(evt) {
-                        var distanceX = Math.abs(current[0] - origin[0]),
-                            distanceY = Math.abs(current[1] - origin[1]),
-                            newTime = (new Date()).getTime();
+                item.style.WebkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
+                item.style.MozTransform = 'translateX(' + offset + 'px)';
+                item.style.OTransform = 'translateX(' + offset + 'px)';
+                item.style.transform = 'translate3d(' + offset + 'px, 0, 0)';
+                callCallback();
+                updateIndicators();
+            };
 
-                        speed = (current[0] - origin[0]) / (newTime - prevTime);
-                        prevTime = newTime;
+            var resetWidths = function() {
+                snapToCurrentSlide(false);
+                item.style.width = (settings.width * subItemCount) + 'px';
 
-                        // Only scroll gallery if X distance is greater than Y distance
-                        if (distanceX > distanceY) {
-                            evt.stopPropagation();
-                            evt.preventDefault();
-                        } else {
-                            current[0] = origin[0];
-                        }
+                for (k = 0; k < subItemCount; k++) {
+                    subItems[k].style.width = settings.width + 'px';
+                }
+            };
 
-                        // Get delta X distance
-                        var delta = current[0] - origin[0];
+            resetWidths();
 
-                        // Make scrolling "sticky" if we are scrolling past the first or last panel
-                        if (offset + delta > 0 || offset + delta < -((subItemCount-1) * settings.width)) {
-                            delta = Math.floor(delta / 2);
-                        }
+            window.addEventListener(orientationEvent, function() {
+                setTimeout(function() {
+                    resetWidths();
+                }, 400);
+            });
 
-                        // Update position
-                        item.style.WebkitTransform = 'translate3d(' + (offset + delta) + 'px, 0, 0)';
-                        item.style.MozTransform = 'translateX(' + (offset + delta) + 'px)';
-                        item.style.OTransform = 'translateX(' + (offset + delta) + 'px)';
-                        item.style.transform = 'translate3d(' + (offset + delta) + 'px, 0, 0)';
-                    };
-
-                    var moveEvent = function(evt) {
-                        current = getXY(evt);
-                        reposition(evt);
-                    };
-
-                    var endEvent = function(evt) {
-                        var diff = current[0] - origin[0] + ((speed / settings.width) * 12000);
-
-                        // Snap to closest panel
-                        if (diff > settings.width / 2 && offset !== 0) {
-                            current[0] = origin[0] + settings.width;
-                            offset = offset + settings.width;
-                        } else if (diff < -(settings.width / 2) && offset != -((subItemCount - 1) * settings.width)) {
-                            current[0] = origin[0] - settings.width;
-                            offset = offset - settings.width;
-                        } else {
-                            current[0] = origin[0];
-                        }
-
-                        currentSlide = Math.floor(Math.abs(offset/settings.width));
-                        snapToCurrentSlide(true);
-
-                        // Remove drag and end event listeners
-                        element.removeEventListener(events.move, moveEvent, false);
-                        element.removeEventListener(events.end, endEvent, false);
-                    };
-
-                    // Set up drag and end event listeners
-                    element.addEventListener(events.move, moveEvent, false);
-                    element.addEventListener(events.end, endEvent, false);
-
-                }, false);
-            // Use buttons and stuff on boring phones
-            } else {
-                // Hide all slides but the active one
-                var hideInactiveSlides = function() {
-                    for (k = 0; k < subItemCount; k++) {
-                        if (k !== currentSlide) {
-                            subItems[k].style.display = 'none';
-                        } else {
-                            subItems[k].style.display = '';
-                        }
-                    }
-                };
-                hideInactiveSlides();
-
+            // Show buttons if wanted
+            if (settings.showButtons) {
                 element.appendChild(createButtons(function() {
                     currentSlide = currentSlide - 1;
                     if (!subItems[currentSlide]) {
                         currentSlide = subItemCount - 1;
                     }
-                    hideInactiveSlides();
-                    callCallback();
-                    updateIndicators();
+                    snapToCurrentSlide(true);
                 }, function() {
                     currentSlide = currentSlide + 1;
                     if (!subItems[currentSlide]) {
                         currentSlide = 0;
                     }
-                    hideInactiveSlides();
-                    callCallback();
-                    updateIndicators();
+                    snapToCurrentSlide(true);
                 }));
             }
-        })(i);
+
+            // auto-rotation if wanted
+            if (options.timeInterval > 0)
+            {
+                setInterval(function() {
+                        currentSlide = currentSlide + 1;
+                        if (!subItems[currentSlide]) {
+                            currentSlide = 0;
+                        }
+                        snapToCurrentSlide(true);
+                    }, options.timeInterval * 1000
+                );
+            }
+
+            // Get X and Y value from a touch or mouse event
+            var getXY = function(evt) {
+                if (evt.targetTouches && evt.targetTouches.length) {
+                    var i,
+                        j = evt.targetTouches.length,
+                        sumX = 0,
+                        sumY = 0;
+                    for (i = 0 ; i < j; i++) {
+                        sumX += evt.targetTouches[i].clientX;
+                        sumY += evt.targetTouches[i].clientY;
+                    }
+                    return [sumX / j, sumY / j];
+                }
+                return [evt.clientX, evt.clientY];
+            };
+
+            // Set up touch listener
+            element.addEventListener(events.start, function(evt) {
+
+                // Get origin position
+                var origin = getXY(evt),
+                    current = origin,
+                    prevTime = (new Date()).getTime(),
+                    speed = 0;
+
+                    disableAnimation();
+
+                // Reposition gallery based on event
+                var reposition = function(evt) {
+                    var distanceX = Math.abs(current[0] - origin[0]),
+                        distanceY = Math.abs(current[1] - origin[1]),
+                        newTime = (new Date()).getTime();
+
+                    speed = (current[0] - origin[0]) / (newTime - prevTime);
+                    prevTime = newTime;
+
+                    // Only scroll gallery if X distance is greater than Y distance
+                    if (distanceX > distanceY) {
+                        evt.stopPropagation();
+                        evt.preventDefault();
+                    } else {
+                        current[0] = origin[0];
+                    }
+
+                    // Get delta X distance
+                    var delta = current[0] - origin[0];
+
+                    // Make scrolling "sticky" if we are scrolling past the first or last panel
+                    if (offset + delta > 0 || offset + delta < -((subItemCount-1) * settings.width)) {
+                        delta = Math.floor(delta / 2);
+                    }
+
+                    // Update position
+                    item.style.WebkitTransform = 'translate3d(' + (offset + delta) + 'px, 0, 0)';
+                    item.style.MozTransform = 'translateX(' + (offset + delta) + 'px)';
+                    item.style.OTransform = 'translateX(' + (offset + delta) + 'px)';
+                    item.style.transform = 'translate3d(' + (offset + delta) + 'px, 0, 0)';
+                };
+
+                var moveEvent = function(evt) {
+                    current = getXY(evt);
+                    reposition(evt);
+                };
+
+                var endEvent = function(evt) {
+                    var diff = current[0] - origin[0] + ((speed / settings.width) * 12000);
+
+                    // Snap to closest panel
+                    if (diff > settings.width / 2 && offset !== 0) {
+                        current[0] = origin[0] + settings.width;
+                        offset = offset + settings.width;
+                    } else if (diff < -(settings.width / 2) && offset != -((subItemCount - 1) * settings.width)) {
+                        current[0] = origin[0] - settings.width;
+                        offset = offset - settings.width;
+                    } else {
+                        current[0] = origin[0];
+                    }
+
+                    currentSlide = Math.floor(Math.abs(offset/settings.width));
+                    snapToCurrentSlide(true);
+
+                    // Remove drag and end event listeners
+                    element.removeEventListener(events.move, moveEvent, false);
+                    element.removeEventListener(events.end, endEvent, false);
+                };
+
+                // Set up drag and end event listeners
+                element.addEventListener(events.move, moveEvent, false);
+                element.addEventListener(events.end, endEvent, false);
+
+            }, false);
+        // Use buttons and stuff on boring phones
+        } else {
+            // Hide all slides but the active one
+            var hideInactiveSlides = function() {
+                for (k = 0; k < subItemCount; k++) {
+                    if (k !== currentSlide) {
+                        subItems[k].style.display = 'none';
+                    } else {
+                        subItems[k].style.display = '';
+                    }
+                }
+            };
+            hideInactiveSlides();
+
+            element.appendChild(createButtons(function() {
+                currentSlide = currentSlide - 1;
+                if (!subItems[currentSlide]) {
+                    currentSlide = subItemCount - 1;
+                }
+                hideInactiveSlides();
+                callCallback();
+                updateIndicators();
+            }, function() {
+                currentSlide = currentSlide + 1;
+                if (!subItems[currentSlide]) {
+                    currentSlide = 0;
+                }
+                hideInactiveSlides();
+                callCallback();
+                updateIndicators();
+            }));
+        }
+    };
+
+    // Set up flickables for all matched elements
+    for (i = 0, j = elements.length; i < j; i++) {
+        setUpFlickables(elements, settings, events, i);
     }
 };
