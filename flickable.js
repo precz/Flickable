@@ -141,7 +141,7 @@ var Flickable = function(elementSelector, options) {
                 indicator.setAttribute('class', settings.dotsIndicatorClass);
             }
 
-            for (k = 0; k < subItemCount; k++) {
+            for (k = 0; k < subItemCount; k += 1) {
                 indicator.appendChild(document.createElement('span'));
             }
 
@@ -152,7 +152,7 @@ var Flickable = function(elementSelector, options) {
         var updateIndicators = function() {
             if (settings.showIndicators) {
                 var indicators = indicator.childNodes, k, l;
-                for (k = 0, l = indicators.length; k < l; k++) {
+                for (k = 0, l = indicators.length; k < l; k += 1) {
                     if (k !== currentSlide) {
                         indicators[k].removeAttribute('class');
                         indicators[k].innerHTML = "";
@@ -214,7 +214,7 @@ var Flickable = function(elementSelector, options) {
                 snapToCurrentSlide(false);
                 item.style.width = (settings.width * subItemCount) + 'px';
 
-                for (k = 0; k < subItemCount; k++) {
+                for (k = 0; k < subItemCount; k += 1) {
                     subItems[k].style.width = settings.width + 'px';
                 }
             };
@@ -264,7 +264,7 @@ var Flickable = function(elementSelector, options) {
                         j = evt.targetTouches.length,
                         sumX = 0,
                         sumY = 0;
-                    for (i = 0 ; i < j; i++) {
+                    for (i = 0 ; i < j; i += 1) {
                         sumX += evt.targetTouches[i].clientX;
                         sumY += evt.targetTouches[i].clientY;
                     }
@@ -352,7 +352,7 @@ var Flickable = function(elementSelector, options) {
         } else {
             // Hide all slides but the active one
             var hideInactiveSlides = function() {
-                for (k = 0; k < subItemCount; k++) {
+                for (k = 0; k < subItemCount; k += 1) {
                     if (k !== currentSlide) {
                         subItems[k].style.display = 'none';
                     } else {
@@ -383,7 +383,7 @@ var Flickable = function(elementSelector, options) {
     };
 
     // Set up flickables for all matched elements
-    for (i = 0, j = elements.length; i < j; i++) {
+    for (i = 0, j = elements.length; i < j; i += 1) {
         setUpFlickables(i);
     }
 };
