@@ -121,7 +121,7 @@ var Flickable = function(elementSelector, options) {
         return slideshowNavigation;
     };
 
-    var setUpFlickables = function (elements, settings, events, i) {
+    var setUpFlickables = function (i) {
         var element = elements[i],
             item = element.children[0],
             subItems = item.children,
@@ -384,6 +384,6 @@ var Flickable = function(elementSelector, options) {
 
     // Set up flickables for all matched elements
     for (i = 0, j = elements.length; i < j; i++) {
-        setUpFlickables(elements, settings, events, i);
+        setUpFlickables(i);
     }
 };
