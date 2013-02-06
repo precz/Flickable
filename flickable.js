@@ -27,7 +27,10 @@ var Flickable = function(elementSelector, options) {
                 return window.innerWidth;
             }
         },
-        orientationTimeout;
+        orientationTimeout,
+        orientationEvent,
+        createButtons,
+        setUpFlickables;
 
     if (elementMatches[1] === '.') {
         elements = document.getElementsByClassName(elementMatches[2]);
@@ -46,7 +49,6 @@ var Flickable = function(elementSelector, options) {
 
     // 'onorientationchange' could be disabled by passing 'resize' option.
     // Default option is 'orientationchange' if supported by browser.
-    var orientationEvent;
     if (settings.orientationEvent === 'orientationchange'
             &&  window.onorientationchange !== undefined) {
         orientationEvent = 'orientationchange';
@@ -86,7 +88,7 @@ var Flickable = function(elementSelector, options) {
     }
 
     // Generate next/previous slide buttons
-    var createButtons = function(prevCallback, nextCallback) {
+    createButtons = function(prevCallback, nextCallback) {
         var slideshowNavigation = document.createElement('div'),
             nextButton = document.createElement('a'),
             prevButton = document.createElement('a');
@@ -122,7 +124,7 @@ var Flickable = function(elementSelector, options) {
         return slideshowNavigation;
     };
 
-    var setUpFlickables = function (i) {
+    setUpFlickables = function (i) {
         var element = elements[i],
             item = element.children[0],
             subItems = item.children,
@@ -131,7 +133,15 @@ var Flickable = function(elementSelector, options) {
             previousSlide = currentSlide,
             offset,
             k,
-            indicator;
+            indicator,
+            updateIndicators,
+            callCallback,
+            enableAnimation,
+            disableAnimation,
+            snapToCurrentSlide,
+            resetWidths,
+            getXY,
+            hideInactiveSlides;
 
         if (settings.showIndicators) {
             indicator = document.createElement('div');
@@ -150,9 +160,9 @@ var Flickable = function(elementSelector, options) {
             element.parentNode.insertBefore(indicator, element.nextSibling);
         }
 
-        var updateIndicators = function() {
+        updateIndicators = function() {
             if (settings.showIndicators) {
-                var indicators = indicator.childNodes, k, l;
+                var indicators = indicator.childNodes, k, l, k1;
                 for (k = 0, l = indicators.length; k < l; k += 1) {
                     if (k !== currentSlide) {
                         indicators[k].removeAttribute('class');
@@ -160,7 +170,7 @@ var Flickable = function(elementSelector, options) {
                     } else {
                         indicators[k].setAttribute('class', settings.activeIndicatorClass);
                         if (settings.showNumbers) {
-                            var k1 = k + 1;
+                            k1 = k + 1;
                             indicators[k].innerHTML = '<div class="caption">' + subItems[k].getAttribute('data-caption') + '</div><div class="number">' + ' ' + k1 + ' / ' + indicators.length + '</div>';
                         }
                     }
@@ -168,7 +178,7 @@ var Flickable = function(elementSelector, options) {
             }
         };
 
-        var callCallback = function() {
+        callCallback = function() {
             if (settings.callback) {
                 setTimeout(function() {
                     if (currentSlide !== previousSlide) {
@@ -181,21 +191,21 @@ var Flickable = function(elementSelector, options) {
 
         // Use touch events and transforms on fancy phones
         if (events) {
-            var enableAnimation = function() {
+            enableAnimation = function() {
                 item.style.WebkitTransition = '-webkit-transform 0.4s ease';
                 item.style.MozTransition = '-moz-transform 0.4s ease';
                 item.style.OTransition = '-o-transform 0.4s ease';
                 item.style.transition = 'transform 0.4s ease';
             };
 
-            var disableAnimation = function() {
+            disableAnimation = function() {
                 item.style.WebkitTransition = '';
                 item.style.MozTransition = '';
                 item.style.OTransition = '';
                 item.style.transition = '';
             };
 
-            var snapToCurrentSlide = function(showAnimation) {
+            snapToCurrentSlide = function(showAnimation) {
                 if (showAnimation) {
                     enableAnimation();
                 } else {
@@ -211,7 +221,7 @@ var Flickable = function(elementSelector, options) {
                 updateIndicators();
             };
 
-            var resetWidths = function() {
+            resetWidths = function() {
                 snapToCurrentSlide(false);
                 item.style.width = (settings.width * subItemCount) + 'px';
 
@@ -259,7 +269,7 @@ var Flickable = function(elementSelector, options) {
             }
 
             // Get X and Y value from a touch or mouse event
-            var getXY = function(evt) {
+            getXY = function(evt) {
                 if (evt.targetTouches && evt.targetTouches.length) {
                     var i,
                         j = evt.targetTouches.length,
@@ -281,15 +291,19 @@ var Flickable = function(elementSelector, options) {
                 var origin = getXY(evt),
                     current = origin,
                     prevTime = (new Date()).getTime(),
-                    speed = 0;
+                    speed = 0,
+                    reposition,
+                    moveEvent,
+                    endEvent;
 
                     disableAnimation();
 
                 // Reposition gallery based on event
-                var reposition = function(evt) {
+                reposition = function(evt) {
                     var distanceX = Math.abs(current[0] - origin[0]),
                         distanceY = Math.abs(current[1] - origin[1]),
-                        newTime = (new Date()).getTime();
+                        newTime = (new Date()).getTime(),
+                        delta;
 
                     speed = (current[0] - origin[0]) / (newTime - prevTime);
                     prevTime = newTime;
@@ -303,7 +317,7 @@ var Flickable = function(elementSelector, options) {
                     }
 
                     // Get delta X distance
-                    var delta = current[0] - origin[0];
+                    delta = current[0] - origin[0];
 
                     // Make scrolling "sticky" if we are scrolling past the first or last panel
                     if (offset + delta > 0 || offset + delta < -((subItemCount-1) * settings.width)) {
@@ -317,12 +331,12 @@ var Flickable = function(elementSelector, options) {
                     item.style.transform = 'translate3d(' + (offset + delta) + 'px, 0, 0)';
                 };
 
-                var moveEvent = function(evt) {
+                moveEvent = function(evt) {
                     current = getXY(evt);
                     reposition(evt);
                 };
 
-                var endEvent = function() {
+                endEvent = function() {
                     var diff = current[0] - origin[0] + ((speed / settings.width) * 12000);
 
                     // Snap to closest panel
@@ -352,7 +366,7 @@ var Flickable = function(elementSelector, options) {
         // Use buttons and stuff on boring phones
         } else {
             // Hide all slides but the active one
-            var hideInactiveSlides = function() {
+            hideInactiveSlides = function() {
                 for (k = 0; k < subItemCount; k += 1) {
                     if (k !== currentSlide) {
                         subItems[k].style.display = 'none';
