@@ -1,4 +1,5 @@
 var Flickable = function(elementSelector, options) {
+    'use strict';
 
     var elements = [],
         elementRegex = new RegExp('^([#.])([^#.,> ]+)'),
