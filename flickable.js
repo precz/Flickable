@@ -328,7 +328,7 @@ var Flickable = function(elementSelector, options) {
                     if (diff > settings.width / 2 && offset !== 0) {
                         current[0] = origin[0] + settings.width;
                         offset = offset + settings.width;
-                    } else if (diff < -(settings.width / 2) && offset != -((subItemCount - 1) * settings.width)) {
+                    } else if (diff < -(settings.width / 2) && offset !== -((subItemCount - 1) * settings.width)) {
                         current[0] = origin[0] - settings.width;
                         offset = offset - settings.width;
                     } else {
