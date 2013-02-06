@@ -47,7 +47,7 @@ var Flickable = function(elementSelector, options) {
     // Default option is 'orientationchange' if supported by browser.
     var orientationEvent;
     if (settings.orientationEvent === 'orientationchange'
-            && 'onorientationchange' in window) {
+            &&  window.onorientationchange !== undefined) {
         orientationEvent = 'orientationchange';
     } else {
         orientationEvent = 'resize';
@@ -70,7 +70,7 @@ var Flickable = function(elementSelector, options) {
     }
 
     // Detect if current device supports touch events, otherwise use mouse events
-    if ('ontouchstart' in document.createElement('div')) {
+    if (document.createElement('div').ontouchstart !== undefined) {
         events = {
             start: 'touchstart',
             move: 'touchmove',
@@ -153,8 +153,8 @@ var Flickable = function(elementSelector, options) {
 
             var updateIndicators = function() {
                 if (settings.showIndicators) {
-                    var indicators = indicator.childNodes;
-                    for (var k = 0, l = indicators.length; k < l; k++) {
+                    var indicators = indicator.childNodes, k;
+                    for (k = 0, l = indicators.length; k < l; k++) {
                         if (k !== currentSlide) {
                             indicators[k].removeAttribute('class');
                             indicators[k].innerHTML = "";
@@ -257,23 +257,22 @@ var Flickable = function(elementSelector, options) {
                             snapToCurrentSlide(true);
                         }, options.timeInterval * 1000
                     );
-                };
+                }
 
                 // Get X and Y value from a touch or mouse event
                 var getXY = function(evt) {
                     if (evt.targetTouches && evt.targetTouches.length) {
-                        var i = 0,
+                        var i,
                             j = evt.targetTouches.length,
                             sumX = 0,
                             sumY = 0;
-                        for ( ; i < j; i++) {
+                        for (i = 0 ; i < j; i++) {
                             sumX += evt.targetTouches[i].clientX;
                             sumY += evt.targetTouches[i].clientY;
                         }
                         return [sumX / j, sumY / j];
-                    } else {
-                        return [evt.clientX, evt.clientY];
                     }
+                    return [evt.clientX, evt.clientY];
                 };
 
                 // Set up touch listener
