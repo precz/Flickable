@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Flickable by precz</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/precz/Flickable">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/precz/Flickable/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/precz/Flickable/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Flickable</h1>
+          <p>A simple Javascript library for creating iOS-style flickable galleries on touch-enabled devices</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/precz">precz</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Flickable</h1>
+
+<p>Flickable is a simple Javascript library for creating iOS-style flickable galleries on touch-enabled devices.</p>
+
+<h2>Demo</h2>
+
+<p>A demo can be run by browsing index.html file.</p>
+
+<h2>Usage</h2>
+
+<p>The library provides a single function, <code>Flickable</code>, which takes two arguments:</p>
+
+<ol>
+<li>A selector for the flickables</li>
+<li>A settings object</li>
+</ol><p>The matched element(s) should contain a second element, which should contain the actual slides. The slides must be of the exact same width, and should be of the same height (for aestethic reasons).</p>
+
+<p>The file <code>flickable.css</code> contains the recommended CSS rules for the flickable elements.</p>
+
+<p>Simple usage:</p>
+
+<pre><code>&lt;div class="flickable"&gt;
+    &lt;ul&gt;
+        &lt;li&gt;First&lt;/li&gt;
+        &lt;li&gt;Second&lt;/li&gt;
+        &lt;li&gt;Third&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+    Flickable('.flickable', {
+        width: 320
+    });
+&lt;/script&gt;
+</code></pre>
+
+<h2>Settings reference</h2>
+
+<ul>
+<li>
+<code>width</code>: The width of each item, including margin, padding and border. Use 'screen' to auto-fit and resize with screen. <strong>Default:</strong> <code>'screen'</code>
+</li>
+<li>
+<code>offset</code>: Which item to start at. <strong>Default:</strong> <code>0</code>
+</li>
+<li>
+<code>enableMouseEvents</code>: Whether to enable mouse events (useful for testing). <strong>Default:</strong> <code>false</code>
+</li>
+<li>
+<code>showIndicators</code>: Whether to show indicators for which item is selected. <strong>Default:</strong> <code>true</code>
+</li>
+<li>
+<code>showNumbers</code>: Whether to show indicators in form of numbers like "2/23". <strong>Default:</strong> <code>false</code>. Supports caption display as well, the caption must be provided in <code>data-caption</code> attribute of <code>&lt;li&gt;</code> tag.</li>
+<li>
+<code>showButtons</code>: Whether to show next/previous-buttons for devices that support touch events. <strong>Default:</strong> <code>false</code>
+</li>
+<li>
+<code>nextButtonText</code>: Text for next-button. <strong>Default:</strong> <code>'Next'</code>
+</li>
+<li>
+<code>prevButtonText</code>: Text for previous-button. <strong>Default:</strong> <code>'Previous'</code>
+</li>
+<li>
+<code>indicatorClass</code>: The class name for the dots indicator wrapper element. <strong>Default:</strong> <code>'flickableIndicatorDots'</code>
+</li>
+<li>
+<code>numberIndicatorClass</code>: The class name for the numbered indicator wrapper element. <strong>Default:</strong> <code>'flickableIndicatorNumbers'</code>
+</li>
+<li>
+<code>activeIndicatorClass</code>: The class name for the active indicator element. <strong>Default:</strong> <code>'flickableIndicatorActive'</code>
+</li>
+<li>
+<code>callback</code>: A function to be called each time the slide changes. The function will be passed the slide number (zero-indexed) as a parameter</li>
+<li>
+<code>orientationEvent</code>: Window event which should determine when to change images width. <strong>Default:</strong> <code>'orientationchange'</code>
+</li>
+<li>
+<code>timeInterval</code>: gallery auto-rotation time in seconds. <strong>Default:</strong> <code>0</code>.</li>
+<li>
+<code>widthCallback</code>: A function to be called each time the orientation changes. The function should return new images width.</li>
+</ul><h2>Licence</h2>
+
+<p>This library is a fork of <a href="https://github.com/BoostCommunications/Flickable">BoostCommunications / Flickable</a> by Arne Martin Aurlien.</p>
+
+<p>The MIT License (MIT)</p>
+
+<p>Copyright (c) 2013 Paweł Preczyński</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
