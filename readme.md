@@ -6,7 +6,7 @@ Flickable is a simple Javascript library for creating iOS-style flickable galler
 Demo
 ----
 
-A demo can be run by browsing index.html file.
+A demo can be viewed at [Flickable Github Pages](http://precz.github.com/Flickable/)
 
 Usage
 -----
