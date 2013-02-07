@@ -1,10 +1,11 @@
-var Flickable = function(elementSelector, options) {
+var Flickable = function (elementSelector, options) {
     'use strict';
 
     var elements = [],
         elementRegex = new RegExp('^([#.])([^#.,> ]+)'),
         elementMatches = elementRegex.exec(elementSelector),
-        i, j,
+        i,
+        j,
         events,
         settings = {
             width: 'screen',
@@ -23,7 +24,7 @@ var Flickable = function(elementSelector, options) {
             prevButtonText: 'Previous',
             orientationEvent: 'orientationchange',
             timeInterval: 0,
-            widthCallback: function() {
+            widthCallback: function () {
                 return window.innerWidth;
             }
         },
@@ -64,9 +65,9 @@ var Flickable = function(elementSelector, options) {
     if (settings.width === 'screen') {
         settings.widthScreen = true;
         settings.width = settings.widthCallback();
-        window.addEventListener(orientationEvent, function() {
+        window.addEventListener(orientationEvent, function () {
             clearTimeout(orientationTimeout);
-            orientationTimeout = setTimeout(function() {
+            orientationTimeout = setTimeout(function () {
                 settings.width = settings.widthCallback();
             }, 200);
         });
@@ -88,7 +89,7 @@ var Flickable = function(elementSelector, options) {
     }
 
     // Generate next/previous slide buttons
-    createButtons = function(prevCallback, nextCallback) {
+    createButtons = function (prevCallback, nextCallback) {
         var slideshowNavigation = document.createElement('div'),
             nextButton = document.createElement('a'),
             prevButton = document.createElement('a');
@@ -108,12 +109,12 @@ var Flickable = function(elementSelector, options) {
         }
 
         // Set up events for next/previous buttons
-        prevButton.addEventListener('click', function(evt) {
+        prevButton.addEventListener('click', function (evt) {
             evt.preventDefault();
             prevCallback();
         });
 
-        nextButton.addEventListener('click', function(evt) {
+        nextButton.addEventListener('click', function (evt) {
             evt.preventDefault();
             nextCallback();
         });
@@ -160,7 +161,7 @@ var Flickable = function(elementSelector, options) {
             element.parentNode.insertBefore(indicator, element.nextSibling);
         }
 
-        updateIndicators = function() {
+        updateIndicators = function () {
             if (settings.showIndicators) {
                 var indicators = indicator.childNodes, k, l, k1;
                 for (k = 0, l = indicators.length; k < l; k += 1) {
@@ -178,9 +179,9 @@ var Flickable = function(elementSelector, options) {
             }
         };
 
-        callCallback = function() {
+        callCallback = function () {
             if (settings.callback) {
-                setTimeout(function() {
+                setTimeout(function () {
                     if (currentSlide !== previousSlide) {
                         settings.callback(currentSlide);
                         previousSlide = currentSlide;
@@ -191,21 +192,21 @@ var Flickable = function(elementSelector, options) {
 
         // Use touch events and transforms on fancy phones
         if (events) {
-            enableAnimation = function() {
+            enableAnimation = function () {
                 item.style.WebkitTransition = '-webkit-transform 0.4s ease';
                 item.style.MozTransition = '-moz-transform 0.4s ease';
                 item.style.OTransition = '-o-transform 0.4s ease';
                 item.style.transition = 'transform 0.4s ease';
             };
 
-            disableAnimation = function() {
+            disableAnimation = function () {
                 item.style.WebkitTransition = '';
                 item.style.MozTransition = '';
                 item.style.OTransition = '';
                 item.style.transition = '';
             };
 
-            snapToCurrentSlide = function(showAnimation) {
+            snapToCurrentSlide = function (showAnimation) {
                 if (showAnimation) {
                     enableAnimation();
                 } else {
@@ -221,7 +222,7 @@ var Flickable = function(elementSelector, options) {
                 updateIndicators();
             };
 
-            resetWidths = function() {
+            resetWidths = function () {
                 snapToCurrentSlide(false);
                 item.style.width = (settings.width * subItemCount) + 'px';
 
@@ -232,21 +233,21 @@ var Flickable = function(elementSelector, options) {
 
             resetWidths();
 
-            window.addEventListener(orientationEvent, function() {
-                setTimeout(function() {
+            window.addEventListener(orientationEvent, function () {
+                setTimeout(function () {
                     resetWidths();
                 }, 400);
             });
 
             // Show buttons if wanted
             if (settings.showButtons) {
-                element.appendChild(createButtons(function() {
+                element.appendChild(createButtons(function () {
                     currentSlide = currentSlide - 1;
                     if (!subItems[currentSlide]) {
                         currentSlide = subItemCount - 1;
                     }
                     snapToCurrentSlide(true);
-                }, function() {
+                }, function () {
                     currentSlide = currentSlide + 1;
                     if (!subItems[currentSlide]) {
                         currentSlide = 0;
@@ -256,26 +257,25 @@ var Flickable = function(elementSelector, options) {
             }
 
             // auto-rotation if wanted
-            if (options.timeInterval > 0)
-            {
-                setInterval(function() {
-                        currentSlide = currentSlide + 1;
-                        if (!subItems[currentSlide]) {
-                            currentSlide = 0;
-                        }
-                        snapToCurrentSlide(true);
-                    }, options.timeInterval * 1000
-                );
+            if (options.timeInterval > 0) {
+                setInterval(function () {
+                    currentSlide = currentSlide + 1;
+                    if (!subItems[currentSlide]) {
+                        currentSlide = 0;
+                    }
+                    snapToCurrentSlide(true);
+                }, options.timeInterval * 1000
+                    );
             }
 
             // Get X and Y value from a touch or mouse event
-            getXY = function(evt) {
+            getXY = function (evt) {
                 if (evt.targetTouches && evt.targetTouches.length) {
                     var i,
                         j = evt.targetTouches.length,
                         sumX = 0,
                         sumY = 0;
-                    for (i = 0 ; i < j; i += 1) {
+                    for (i = 0; i < j; i += 1) {
                         sumX += evt.targetTouches[i].clientX;
                         sumY += evt.targetTouches[i].clientY;
                     }
@@ -285,7 +285,7 @@ var Flickable = function(elementSelector, options) {
             };
 
             // Set up touch listener
-            element.addEventListener(events.start, function(evt) {
+            element.addEventListener(events.start, function (evt) {
 
                 // Get origin position
                 var origin = getXY(evt),
@@ -296,10 +296,10 @@ var Flickable = function(elementSelector, options) {
                     moveEvent,
                     endEvent;
 
-                    disableAnimation();
+                disableAnimation();
 
                 // Reposition gallery based on event
-                reposition = function(evt) {
+                reposition = function (evt) {
                     var distanceX = Math.abs(current[0] - origin[0]),
                         distanceY = Math.abs(current[1] - origin[1]),
                         newTime = (new Date()).getTime(),
@@ -320,7 +320,7 @@ var Flickable = function(elementSelector, options) {
                     delta = current[0] - origin[0];
 
                     // Make scrolling "sticky" if we are scrolling past the first or last panel
-                    if (offset + delta > 0 || offset + delta < -((subItemCount-1) * settings.width)) {
+                    if (offset + delta > 0 || offset + delta < -((subItemCount - 1) * settings.width)) {
                         delta = Math.floor(delta / 2);
                     }
 
@@ -331,12 +331,12 @@ var Flickable = function(elementSelector, options) {
                     item.style.transform = 'translate3d(' + (offset + delta) + 'px, 0, 0)';
                 };
 
-                moveEvent = function(evt) {
+                moveEvent = function (evt) {
                     current = getXY(evt);
                     reposition(evt);
                 };
 
-                endEvent = function() {
+                endEvent = function () {
                     var diff = current[0] - origin[0] + ((speed / settings.width) * 12000);
 
                     // Snap to closest panel
@@ -350,7 +350,7 @@ var Flickable = function(elementSelector, options) {
                         current[0] = origin[0];
                     }
 
-                    currentSlide = Math.floor(Math.abs(offset/settings.width));
+                    currentSlide = Math.floor(Math.abs(offset / settings.width));
                     snapToCurrentSlide(true);
 
                     // Remove drag and end event listeners
@@ -366,7 +366,7 @@ var Flickable = function(elementSelector, options) {
         // Use buttons and stuff on boring phones
         } else {
             // Hide all slides but the active one
-            hideInactiveSlides = function() {
+            hideInactiveSlides = function () {
                 for (k = 0; k < subItemCount; k += 1) {
                     if (k !== currentSlide) {
                         subItems[k].style.display = 'none';
@@ -377,7 +377,7 @@ var Flickable = function(elementSelector, options) {
             };
             hideInactiveSlides();
 
-            element.appendChild(createButtons(function() {
+            element.appendChild(createButtons(function () {
                 currentSlide = currentSlide - 1;
                 if (!subItems[currentSlide]) {
                     currentSlide = subItemCount - 1;
@@ -385,7 +385,7 @@ var Flickable = function(elementSelector, options) {
                 hideInactiveSlides();
                 callCallback();
                 updateIndicators();
-            }, function() {
+            }, function () {
                 currentSlide = currentSlide + 1;
                 if (!subItems[currentSlide]) {
                     currentSlide = 0;
