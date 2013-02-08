@@ -86,13 +86,6 @@
     </ul>
 </div>
 
-<script type="text/javascript">
-    Flickable('#default', {
-        width: $("#demo").width(),
-        enableMouseEvents: true,
-    });
-</script>
-
 <li>Autorotation:</li>
 
 <div class="flickable" id="autorotation">
@@ -103,14 +96,6 @@
     </ul>
 </div>
 
-<script type="text/javascript">
-    Flickable('#autorotation', {
-        width: $("#demo").width(),
-        enableMouseEvents: true,
-        timeInterval: 1,
-    });
-</script>
-
 <li>Numbers/caption:</li>
 
 <div class="flickable" id="numbers">
@@ -120,14 +105,6 @@
         <li data-caption="Three">Three</li>
     </ul>
 </div>
-
-<script type="text/javascript">
-    Flickable('#numbers', {
-        width: $("#demo").width(),
-        enableMouseEvents: true,
-        showNumbers: true,
-    });
-</script>
 
 <li style="margin-top: 30px;">Buttons:</li>
 
@@ -140,12 +117,41 @@
 </div>
 
 <script type="text/javascript">
-    Flickable('#buttons', {
-        width: $("#demo").width(),
-        enableMouseEvents: true,
-        showButtons: true,
-        showIndicators: false,
-    });
+    (function () {
+        var widthCallback = function () {
+            return $("#demo").width();
+        }
+
+        window.onload = function () {
+            Flickable('#default', {
+                width: 'screen',
+                enableMouseEvents: true,
+                widthCallback: widthCallback,
+            });
+
+            Flickable('#autorotation', {
+                width: 'screen',
+                enableMouseEvents: true,
+                timeInterval: 1,
+                widthCallback: widthCallback,
+            });
+
+            Flickable('#numbers', {
+                width: 'screen',
+                enableMouseEvents: true,
+                showNumbers: true,
+                widthCallback: widthCallback,
+            });
+
+            Flickable('#buttons', {
+                width: 'screen',
+                enableMouseEvents: true,
+                showButtons: true,
+                showIndicators: false,
+                widthCallback: widthCallback,
+            });
+        }
+    })();
 </script>
 </ul>
 <h2>Usage</h2>
