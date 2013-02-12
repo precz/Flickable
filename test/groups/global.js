@@ -1,6 +1,8 @@
-test('Global varaible', function () {
+module('global variable');
+test('test if object exist', function () {
 	'use strict';
-	ok(window.Flickable !== undefined, 'is global');
-	ok(typeof (window.Flickable) === 'function', 'is function');
-	ok(Flickable('#qunit-fixture', {}) === undefined, 'returns undefined');
+	//var $fixture = $( "#qunit-fixture" );
+	ok(window.Flickable !== undefined, 'exists');
+	strictEqual(typeof (window.Flickable), 'function', 'is function');
+	//strictEqual(Flickable('#qunit-fixture', {}), undefined, 'function returns undefined');
 });
