@@ -121,7 +121,7 @@ var Flickable = function (elementSelector, options) {
                         }
                     }
                 },
-                ccallCallback = function () {
+                callCallback = function () {
                     if (settings.callback) {
                         setTimeout(function () {
                             if (currentSlide !== previousSlide) {
